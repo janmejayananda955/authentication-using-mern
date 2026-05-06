@@ -20,7 +20,7 @@ const Input = ({
           name={name}
           type={type === "password" && show ? "text" : type}
           placeholder={placeholder}
-          className={`w-full bg-black/60 border border-zinc-700/80 rounded-lg px-4 py-3.5 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-zinc-100 placeholder-zinc-500 text-sm ${type === "password" ? "pr-16" : ""} ${className || ""}`}
+          className={`w-full bg-black/60 border border-zinc-700/80 rounded-lg px-4 py-3 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-zinc-100 placeholder-zinc-500 text-sm ${type === "password" ? "pr-12" : ""} ${className || ""}`}
           value={value}
           onChange={onChange}
           disabled={disabled}
