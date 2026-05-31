@@ -1,6 +1,7 @@
 import userModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { generateAccessToken, generateRefreshToken, sendCookie } from "../utils/auth.util.js";
 
 /**
  * @name registerUserController
@@ -39,13 +40,9 @@ const registerUserController = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
+    const token = generateAccessToken(user);
 
-    res.cookie("token", token);
+    sendCookie(res, token);
 
     res.status(201).json({
       message: "User register successfully",
@@ -87,14 +84,11 @@ const loginUserController = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const token = jwt.sign(
-      { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user); // also set in cookie
 
-    res.cookie("token", token);
-    res.status(201).json({
+    sendCookie(res, accessToken, refreshToken);
+    res.status(200).json({
       message: "User login successfully",
       user: {
         id: user._id,
