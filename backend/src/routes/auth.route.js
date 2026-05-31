@@ -18,10 +18,15 @@ authRouter.post("/register", authController.registerUserController)
 authRouter.post("/login", authController.loginUserController)
 
 /**
- * @route POST /api/auth/refreshToken
+ * @route get /api/auth/refreshToken
  * @description Generates a new access token using a valid refresh token cookie
  * @access Public 
  */
-authRouter.post("/refresh-token", authController.refreshTokenController)
+authRouter.get("/refresh-token", authController.refreshTokenController)
+
+/**
+ * @route get /api/auth/logout
+ */
+authRouter.get("/logout", authController.logoutController)
 
 export default authRouter;
