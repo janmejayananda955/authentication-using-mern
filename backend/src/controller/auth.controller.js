@@ -1,7 +1,11 @@
 import userModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { generateAccessToken, generateRefreshToken, sendCookie } from "../utils/auth.util.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  sendCookie,
+} from "../utils/auth.util.js";
 
 /**
  * @name registerUserController
@@ -102,4 +106,42 @@ const loginUserController = async (req, res) => {
   }
 };
 
-export default { registerUserController, loginUserController };
+/**
+ * @name RefreshTokenController
+ * @description refresh the access token using refresh token, excepts refresh token in cookies
+ * @access public
+ */
+const refreshTokenController = async (req, res) => {
+  const incomingRefreshtoken = req.cookies?.refreshToken;
+
+  if (!incomingRefreshtoken) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const decoded = jwt.verify(incomingRefreshtoken, process.env.JWT_REFRESH_SECRET);
+    const user = await userModel.findById(decoded._id);
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+    sendCookie(res, newAccessToken, newRefreshToken);
+    res.status(200).json({
+      message: "Access token refreshed successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+
+
+  } catch (err) {
+    console.error("Refresh token error:", err.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export default { registerUserController, loginUserController, refreshTokenController };

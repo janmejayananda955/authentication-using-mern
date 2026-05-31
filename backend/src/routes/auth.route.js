@@ -17,4 +17,11 @@ authRouter.post("/register", authController.registerUserController)
  */
 authRouter.post("/login", authController.loginUserController)
 
+/**
+ * @route POST /api/auth/refreshToken
+ * @description Generates a new access token using a valid refresh token cookie
+ * @access Public 
+ */
+authRouter.post("/refresh-token", authController.refreshTokenController)
+
 export default authRouter;
