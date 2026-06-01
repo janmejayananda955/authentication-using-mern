@@ -205,7 +205,6 @@ const logoutController = async (req, res) => {
   const incomingRefreshtoken = req.cookies?.refreshToken;
 
   if (!incomingRefreshtoken) {
-    console.warn("Logout attempt without refresh token");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
@@ -213,14 +212,12 @@ const logoutController = async (req, res) => {
     .createHash("sha256")
     .update(incomingRefreshtoken)
     .digest("hex");
- console.log("Hashed refresh token for logout:", hashedRefreshToken); // Debug log to verify the hashed token value
   const session = await sessionModel.findOne({
     refreshToken:hashedRefreshToken,
     revoked: false,
   });
 
   if (!session) {
-    console.warn("Logout attempt with invalid or already revoked refresh token");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
